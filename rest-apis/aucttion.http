@@ -1,0 +1,19 @@
+GET http://localhost:8080/auction?category=eletronics&status=0
+Content-Type: application/json
+
+### 
+
+GET http://localhost:8080/auction/6f28fcc4-870f-4478-896f-924008830606
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/auction
+Content-Type: application/json
+
+{
+    "product_name": "Macbook Pro M3 Max",
+    "category": "eletronics",
+    "description": "Laptops and Computers",
+    "condition": 1
+}

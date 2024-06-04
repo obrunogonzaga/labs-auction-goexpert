@@ -1,0 +1,41 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Project-local glide cache, RE: https://github.com/Masterminds/glide
+.glide/
+
+# Project-local dep cache
+vendor/
+Gopkg.lock
+
+# Misc generated files
+*.swp
+*~
+
+# OS generated files #
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+._*
+
+# IDE specific files
+.idea/
+.vscode/
+*.vscode
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Compiled files and directories
+bin/
+pkg/
