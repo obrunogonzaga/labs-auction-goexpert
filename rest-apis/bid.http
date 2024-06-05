@@ -1,0 +1,15 @@
+### GET request to example server
+POST http://localhost:8080/bid
+Content-Type: application/json
+
+{
+    "user_id": "22ba52e8-c4c9-4697-98c3-37e6b02a8d05",
+    "auction_id": "6f28fcc4-870f-4478-896f-924008830606",
+    "amount": 100
+}
+
+###
+
+GET http://localhost:8080/bid/6f28fcc4-870f-4478-896f-924008830606
+Content-Type: application/json
+

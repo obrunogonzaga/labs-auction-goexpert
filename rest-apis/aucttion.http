@@ -17,3 +17,8 @@ Content-Type: application/json
     "description": "Laptops and Computers",
     "condition": 1
 }
+
+###
+
+GET http://localhost:8080/auction/winner/6f28fcc4-870f-4478-896f-924008830606
+Content-Type: application/json
