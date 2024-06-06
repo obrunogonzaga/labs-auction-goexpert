@@ -8,8 +8,12 @@ import (
 	"fullcycle-auction_go/internal/internal_error"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"sync"
 	"time"
 )
+
+var lock sync.Mutex
 
 type AuctionEntityMongo struct {
 	Id          string                          `bson:"_id"`
@@ -58,21 +62,29 @@ func (ar *AuctionRepository) CreateAuction(
 }
 
 func closeAuctionIfStillOpen(ctx context.Context, auctionId string, ar *AuctionRepository) *internal_error.InternalError {
+	lock.Lock()
+	defer lock.Unlock()
+
 	fmt.Println("Auction with id", auctionId, "is expired")
 
 	filter := bson.M{"_id": auctionId, "status": auction_entity.Active}
 	update := bson.M{
 		"$set": bson.M{"status": auction_entity.Completed},
 	}
-	result, err := ar.Collection.UpdateOne(ctx, filter, update)
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.Before)
+
+	var updatedDocument bson.M
+	err := ar.Collection.FindOneAndUpdate(ctx, filter, update, opts).Decode(&updatedDocument)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return internal_error.NewInternalServerError("No auction found to update")
+		}
 		logger.Error(fmt.Sprintf("Error trying to update auction by id = %s", auctionId), err)
 		return internal_error.NewInternalServerError("Error trying to update auction by id")
 	}
-	if result.MatchedCount == 0 {
-		return internal_error.NewInternalServerError("Error trying to update auction by id")
-	}
-	fmt.Println("Auction with id", auctionId, "is expired")
+
+	fmt.Println("Auction with id", auctionId, "has been updated to completed")
 
 	return nil
 }
