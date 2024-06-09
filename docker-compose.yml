@@ -8,6 +8,8 @@ services:
     env_file:
       - cmd/auction/.env
     command: sh -c "/auction"
+    networks:
+      - localNetwork
 
   mongodb:
     image: mongo:latest
@@ -18,7 +20,13 @@ services:
       - cmd/auction/.env
     volumes:
       - mongo-data:/data/db
+    networks:
+      - localNetwork
 
 volumes:
   mongo-data:
     driver: local
+
+networks:
+  localNetwork:
+    driver: bridge
