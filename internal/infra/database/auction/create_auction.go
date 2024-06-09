@@ -6,11 +6,14 @@ import (
 	"fullcycle-auction_go/configuration/logger"
 	"fullcycle-auction_go/internal/entity/auction_entity"
 	"fullcycle-auction_go/internal/internal_error"
+	"os"
+	"strconv"
+	"sync"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"sync"
-	"time"
 )
 
 var lock sync.Mutex
@@ -46,10 +49,17 @@ func (ar *AuctionRepository) CreateAuction(
 		Status:      auctionEntity.Status,
 		Timestamp:   auctionEntity.Timestamp.Unix(),
 	}
-	_, err := ar.Collection.InsertOne(ctx, auctionEntityMongo)
+	auctionDurationStr := os.Getenv("AUCTION_DURATION")
+	auctionDuration, err := strconv.Atoi(auctionDurationStr)
+	if err != nil {
+		logger.Error("Error converting AUCTION_DURATION to int", err)
+		return internal_error.NewInternalServerError("Error converting AUCTION_DURATION to int")
+	}
+
+	_, err = ar.Collection.InsertOne(ctx, auctionEntityMongo)
 
 	go func(ctx context.Context, auctionId string, ar *AuctionRepository) {
-		time.Sleep(30 * time.Second)
+		time.Sleep(time.Duration(auctionDuration) * time.Second)
 		closeAuctionIfStillOpen(ctx, auctionId, ar)
 	}(ctx, auctionEntity.Id, ar)
 

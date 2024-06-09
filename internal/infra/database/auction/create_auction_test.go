@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"fullcycle-auction_go/internal/entity/auction_entity"
 	"fullcycle-auction_go/internal/internal_error"
+	"github.com/joho/godotenv"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,6 +17,13 @@ import (
 	"testing"
 	"time"
 )
+
+func init() {
+	envPath := "../../../../cmd/auction/.env"
+	if err := godotenv.Load(envPath); err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+}
 
 func setupMongoContainer(ctx context.Context) (mongoURI string, cleanup func()) {
 	req := testcontainers.ContainerRequest{
